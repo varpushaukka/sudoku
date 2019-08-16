@@ -77,7 +77,24 @@
   (assoc-in board coord new-value))
 
 (defn find-empty-point [board]
-  nil)
+  (loop [b board
+         row (first board)
+         i 0
+         j 0]
+  (cond
+    (= [[]] board) []
+    (empty? row) (recur (rest board) (second board) (inc i) 0) 
+    (zero? (first row)) [i j]
+    :else (recur b (rest row) i (inc j)))))
 
 (defn solve [board]
-  nil)
+    (if (empty? (find-empty-point board))
+      (if (valid-solution? board) 
+        board 
+        [])
+      (let [block (find-empty-point board)]
+        (for [val (valid-values-for board block)
+              solution (solve (set-value-at board block val))]
+          solution
+          ))
+      ))
